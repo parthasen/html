@@ -4,7 +4,8 @@
 <%@ page import="java.sql.Connection"%>
 <%@ page import="java.sql.Statement"%>
 <%@ page import="java.sql.ResultSet"%>
-<%@ page import="teatapi1.Add" %>
+<%@ page import="testdb.dbbean"%>
+
 <jsp:directive.page import="java.sql.Date" />
 <jsp:directive.page import="java.sql.Timestamp" />
 <jsp:directive.page import="java.sql.SQLException"/>
@@ -26,11 +27,27 @@
 
 				<td><a href="addPerson.jsp">
 				<%
-				int aa = 5;
-				int bb =3;
-				Add ad = new Add();
-				int cc= ad.addnumber(aa,bb);
-				out.println(cc);
+				//int aa = 5;
+				//int bb =3;
+				//Add ad = new Add();
+				//int cc= ad.addnumber(aa,bb);
+				//out.println(cc);
+				
+				dbbean bb = new dbbean();
+		String q_sql = "select a.o_index,a.m_index,a.o_time,b.m_username,c.i_index,d.i_name,d.i_price from morder as a";
+		q_sql +=" inner join member as b on a.m_index = b.m_index inner join detail as c ";
+		q_sql +=" on a.o_index = c.o_index inner join items as d on c.i_index=d.i_index ";
+		List ll = bb.querySelect(q_sql);
+		for(int i=0;i<ll.size();i++){
+			Map map = (Map) ll.get(i); 
+			
+			System.out.println(map.get( "i_price").toString());
+			System.out.println(map.get( "o_index").toString());
+			System.out.println(map.get( "i_index").toString());
+			System.out.println(map.get( "i_name").toString());
+			//System.out.println(map.toString());
+			}
+			
 				%></a>
 				</td>
 			</tr>
@@ -50,24 +67,18 @@
 		
 		// 獲得資料庫連接。 三個參數分別為 連接URL，使用者名稱，密碼
 		conn = DriverManager.getConnection(
-							"jdbc:mysql://localhost:3306/nblog10", 
-							"nblogTW", 
-							"nblogTW");
+							"jdbc:mysql://localhost:3306/worker", 
+							"root", 
+							"1234");
 		
 		// 獲得 Statement。 Statement 對像用於執行 SQL。相當於控制台。
 		stmt = conn.createStatement();
 		
-		String q_sql = "select a.o_index,a.m_index,a.o_time,b.m_name,";
-		q_sql +="c.o_index, d.p_name, d.p_price from m_order as a";
-		q_sql +="inner join member as b";
-		q_sql +="on a.m_index = b.m_index";
-		q_sql +="inner join m_orderDetail as c";
-		q_sql +="on a.o_index = c.o_index";
-		q_sql +="inner join product as d";
-		q_sql +="on c.p_index = d.p_index";
-		
+		String q_sql = "select a.o_index,a.m_index,a.o_time,b.m_username,c.i_index,d.i_name,d.i_price from morder as a";
+			q_sql +=" inner join member as b on a.m_index = b.m_index inner join detail as c ";
+			q_sql +=" on a.o_index = c.o_index inner join items as d on c.i_index=d.i_index ";
 		// 使用 Statement 執行 SELECT 敘述。傳回結果集。
-		rs = stmt.executeQuery("select * from n2_member");	
+		rs = stmt.executeQuery(q_sql);	
 %>
 		<form action="operatePerson.jsp" method=get>
 			<table bgcolor="#CCCCCC" cellspacing=1 cellpadding=5 width=100%>
@@ -104,25 +115,31 @@
 				<%
 					// 檢查結果集。rs.next() 傳回結果集中是否還有下一條記錄。如果有，自動捲動到下一條記錄並傳回 true
 					while (rs.next()) {
-
+					
 						int o_index = rs.getInt("o_index"); // 整形類型
 						int m_index = rs.getInt("m_index");
-						String name = rs.getString("m_name"); // 字串類型
-						int p_index = rs.getInt("p_index");
-						Date birthday = rs.getDate("birthday"); // 日期類型，只有日期資訊而沒有時間資訊
-						String p_price = rs.getString("p_price"); // 字串類型
+						Date o_time = rs.getDate("o_time"); // 日期類型，只有日期資訊而沒有時間資訊
+						String m_username = rs.getString("m_username"); // 字串類型
+						int i_index = rs.getInt("i_index"); // 整形類型
+						String i_price = rs.getString("i_price"); // 字串類型
 						
+					
+						//String description = rs.getString("description");
+
+						//Date birthday = rs.getDate("birthday"); // 日期類型，只有日期資訊而沒有時間資訊
+						//Timestamp createTime = rs.getTimestamp("create_time"); // 時間戳類型，既有日期又有時間。
+
 						out.println("		<tr bgcolor=#FFFFFF>");
-						out.println("	<td><input type=checkbox name=id value=" + id
+						out.println("	<td><input type=checkbox name=id value=" +o_index
 						+ "></td>");
 						out.println("	<td>" + o_index + "</td>");
 						out.println("	<td>" + m_index + "</td>");
-						out.println("	<td>" + m_name + "</td>");
+						out.println("	<td>" + o_time + "</td>");
+						out.println("	<td>" + m_username + "</td>");
 						out.println("	<td>" + i_index + "</td>");
 						out.println("	<td>" + i_price + "</td>");
-						//
-						//
-						//
+						//out.println("	<td>" + description + "</td>");
+						//out.println("	<td>" + createTime + "</td>");
 						out.println("	<td>");
 						out.println("		<a href='operatePerson.jsp?action=del&id="
 						+ o_index + "' onclick='return confirm(\"確定刪除該記錄？\")'>刪除</a>");
@@ -146,7 +163,7 @@
 							i++){array[i].checked=false;}">取消全選</a>
 						<input type='submit'
 							onclick="return confirm('即將刪除所選擇的記錄。是否刪除？'); " value='刪除'>
-					</td>
+					</td>9
 				</tr>
 			</table>
 		</form>
