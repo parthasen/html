@@ -6,8 +6,8 @@ Statement stmt = null;
 ResultSet rs = null;
     try {
       String url = "jdbc:mysql://localhost:3306/demo";
-      String user = "root";
-      String password = "qwerfdsa";
+      String user = "David";
+      String password = "8065";
       String driver = "com.mysql.jdbc.Driver";
       Class.forName(driver);
       con = DriverManager.getConnection(url, user, password);
