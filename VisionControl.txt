@@ -1,0 +1,48 @@
+I build a .jsp by following web and adjust some code 
+(The code is wrong, can't build a workable .sql )
+web site:
+http://j796160836.pixnet.net/blog/post/31158417-%5Bjsp%5D-jsp%E9%80%A3%E6%8E%A5mysql%E5%88%9D%E6%8E%A2
+
+following are my solution
+
+{
+CREATE DATABASE test_jsdb;
+use test_jsdb;
+CREATE TABLE IF NOT EXISTS employee(
+emp_id int(11) unsigned NOT NULL AUTO_INCREMENT,
+emp_name varchar(100) NOT NULL,
+emp_age int(11) NOT NULL,
+PRIMARY KEY (emp_id))
+ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3;
+
+INSERT INTO employee(emp_id, emp_name, emp_age) VALUES(1, 'mary', 20);
+INSERT INTO employee(emp_id, emp_name, emp_age) VALUES(2, 'amy', 22);
+}
+
+=============
+That's my solution which is different with the bloger. YEAH!
+And following is the result from Tomcat:
+{
+can't read data com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Table 'test_jsdb.album' doesn't exist
+}
+原因:'twstw_jsdb.album'不存在，那就改善它吧。
+解決方案:打開nativCat，看到test_jsdb之下有employee 這個table，改成'test_jsdb.employee'。
+這就ok了。
+
+===============
+Also, I adjust the demo.jsp . But, it's still can't work.(沒結果)
+QAQ
+
+localhost/demo/demo.jsp 
+show nothing !!
+
+How can I do ?
+
+***
+因為: 你沒有寫 System.out.println(sql)。
+解決方案: 加上System.out.println(sql)
+***
+
+===================
+Exploration:
+Tomcat會優先抓取ROOT之外的資料夾內容，此發現前提是ROOT資料夾內外都有相同名稱的.jsp。
